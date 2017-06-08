@@ -12,6 +12,7 @@ var atSentence = 0;
 var idrSentenceLength = -1;
 var taggedSents = [];
 var removeFromNullIndexes = [];
+var corpusData;
 
 function TaggedSentence(words, indexes, idrSentenceLength) {
   this.words = words;
@@ -20,12 +21,25 @@ function TaggedSentence(words, indexes, idrSentenceLength) {
 }
 
 function processPairs(data) {
+  corpusData = data;
   for (var i = 0; i < data.length; i++) {
+    createP('Sentence #' + i + ":");
     showBox(data[i].idr, 'idr', i);
     showBox(data[i].eng, 'eng', i);
     removeFromNullIndexes.push([]);
   }
 }
+
+// function putAll() {
+//   var result = '';
+//   for (var i = 0; i < corpusData.length; i++) {
+//     result += "Sentence pair #" + corpusData[i].id;
+//     result += corpusData[i].idr;
+//     result += select('.result-'+corpusData[i].id).attribute('innerText');
+//   }
+
+//   resultbox.html(result);
+// }
 
 function showBox(words, lang, k) {
   var par = createP('');
@@ -125,8 +139,6 @@ function resultCalc() {
       }
     }
   }
-
-  console.log(",", removeFromNullIndexes[atSentence]);
 
   for (let div of idrPicked) {
     var cIdx = parseInt(div.attribute('idx'));

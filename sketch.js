@@ -41,12 +41,15 @@ function setup() {
 
   // This button clears the new paragraph elements
   // added
-  clearButton = select('#clear');
-  clearButton.mousePressed(clearText);
+  // clearButton = select('#clear');
+  // clearButton.mousePressed(clearText);
+  // finishbutton = select('#finish');
+  // finishbutton.mousePressed(putAll);
 
   // Spacing checkbox
   spacingCheck = select('#keepspacing');
 
+  // resultbox = select('#textresult');
 }
 
 // Load a file for quick testing
