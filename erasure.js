@@ -5,18 +5,29 @@
 
 var idrPicked = [];
 var engPicked = [];
+var atSentence = 0;
+
+var taggedSents = [];
+
+function TaggedSentence(words, indexes) {
+  this.words = words;
+  this.indexes = indexes;
+}
 
 function processPairs(data) {
-  for (let pair of data) {
-    showBox(pair.idr, 'idr');
-    showBox(pair.eng, 'eng');
+  for (var i = 0; i < data.length; i++) {
+    showBox(data[i].idr, 'idr', i);
+    showBox(data[i].eng, 'eng', i);
   }
 }
 
-function showBox(words, lang) {
+function showBox(words, lang, k) {
   var par = createP('');
   par.class('text');
   par.class(lang);
+
+  var actualWords = [];
+  var targetIndexes = [];
 
   for (var i = 0; i < words.length; i++) {
     if (lang == 'idr') {
@@ -28,6 +39,9 @@ function showBox(words, lang) {
       var word = splitted[0];
       var idx = i;
     }
+    actualWords.push(word);
+    targetIndexes.push([]);
+
     var div = createDiv(word + ' ');
     // This keeps it looking like regular text
     div.style('display', 'inline');
@@ -52,6 +66,20 @@ function showBox(words, lang) {
     }
   }
 
+  if (lang == 'eng') {
+    var res = createP('');
+    res.class('result-' + k);
+    
+    var displayed = "";
+
+    for (let word of actualWords) {
+      displayed += word + "({ }) ";
+    }
+
+    res.html(displayed);
+    taggedSents.push(new TaggedSentence(actualWords, targetIndexes));
+  }
+
   paragraphs.push(par);
 }
 
@@ -59,6 +87,42 @@ function clearSelection(div) {
   div.style('background-color', '#fff');
   div.style('color', '#000');
   div.attribute('clicked', 'false');
+}
+
+function resultCalc() {
+  var idrEventIndexes = '';
+  var engEventIndexes = [];
+
+  for (let div of idrPicked) {
+    idrEventIndexes + ' ' + (div.attribute('idx')); }
+
+  for (let div of engPicked) {
+    engEventIndexes.push(parseInt(div.attribute('idx'))); }
+
+  listOfIndexes = taggedSents[atSentence].indexes;
+
+  for (var k = 0; k < engEventIndexes.length; k++) {
+    listOfIndexes[k] = (idrEventIndexes);
+  }
+
+  res = select('.result-' + atSentence);
+  
+  var displayed = "";
+  var actualWords = taggedSents[atSentence].words;
+
+  for (var k = 0; k < actualWords.length; k++) {
+    displayed += actualWords[k] + "({ " + taggedSents[atSentence].indexes[k] + "}) ";
+  }
+
+  res.html(displayed);
+}
+
+function keyPressed() {
+  if (keyCode == CONTROL) {
+    console.log(atSentence);
+    var res = select('.result-' + atSentence);
+    resultCalc();
+  }
 }
 
 function idrPick() {
@@ -72,11 +136,16 @@ function idrPick() {
   this.style('background-color', '#f58080');
   this.style('color', '#fff');
   this.attribute('clicked', 'true');
-  console.log(idrPicked);
 }
 
 function engPick() {
-  engPicked.push(this.html());
+  if (!(engPicked.length == 0 || keyIsDown(SHIFT))) {
+    for (let div of engPicked) {
+      clearSelection(div);
+    }
+    engPicked = [];
+  }
+  engPicked.push(this);
   this.style('background-color', '#9090f9');
   this.style('color', '#fff');
   this.attribute('clicked', 'true');
