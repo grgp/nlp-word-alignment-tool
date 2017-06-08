@@ -186,8 +186,16 @@ function keyPressed() {
 function idrPick() {
   if (atSentence != this.attribute('atSentence')) {
     atSentence = this.attribute('atSentence');
+    for (let div of idrPicked) {
+      clearSelection(div);
+    }
+    idrPicked = [];
+    for (let div of engPicked) {
+      clearSelection(div);
+    }
+    engPicked = [];
   }
-  if (atSentence != this.attribute('atSentence') || !(idrPicked.length == 0 || keyIsDown(SHIFT))) {
+  if (!(idrPicked.length == 0 || keyIsDown(SHIFT))) {
     for (let div of idrPicked) {
       clearSelection(div);
     }
@@ -203,6 +211,14 @@ function idrPick() {
 function engPick() {
   if (atSentence != this.attribute('atSentence')) {
     atSentence = this.attribute('atSentence');
+    for (let div of idrPicked) {
+      clearSelection(div);
+    }
+    idrPicked = [];
+    for (let div of engPicked) {
+      clearSelection(div);
+    }
+    engPicked = [];
   }
   if (atSentence != this.attribute('atSentence') || !(engPicked.length == 0 || keyIsDown(SHIFT))) {
     for (let div of engPicked) {
