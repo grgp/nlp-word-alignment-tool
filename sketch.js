@@ -83,9 +83,32 @@ function gotFile(file) {
   }
 }
 
+function sentencePair(id, idr, eng) {
+  this.id = id;
+  this.idr = idr;
+  this.eng = eng;
+}
+
+function parseToList(input) {
+  lines = input.split('\n');
+  sentencePairs = [];
+  for (var i = 0; i < lines.length / 3; i++) {
+    var id = parseInt(lines[i*3].split('#')[1]);
+    // var idr = lines[i*3+1].split(/\([0-9]+\) /);
+    // var eng = lines[i*3+2].split(/\({ }\) /);
+
+    var idr = lines[i*3+1].split(' ');
+    var eng = lines[i*3+2].split(/ (?![\(\}])/);
+    
+    sentencePairs.push(new sentencePair(id, idr, eng));
+  }
+  processPairs(sentencePairs);
+}
+
 // Handle the text input field
 function handleInput() {
-  process(input.value());
+  parseToList(input.value());
+  // process(input.value());
 }
 
 // Clear all the divs with remove()

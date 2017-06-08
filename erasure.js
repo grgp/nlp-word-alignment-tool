@@ -3,6 +3,36 @@
 // https://github.com/shiffman/A2Z-F16
 // http://shiffman.net/a2z
 
+function processPairs(data) {
+  for (let pair of data) {
+    showBox(pair.idr, 'idr');
+    showBox(pair.eng, 'eng');
+  }
+}
+
+function showBox(words, lang) {
+  var par = createP('');
+  par.class('text');
+  par.class(lang);
+
+  for (var i = 0; i < words.length; i++) {
+    var div = createDiv(words[i] + ' ');
+    // This keeps it looking like regular text
+    div.style('display', 'inline');
+    // This makes it look clickable
+    div.style('cursor', 'pointer');
+
+    // The div is placed inside the paragraph element
+    div.parent(par);
+
+    // Handling mouseover, mouseout, and pressed
+    div.mouseOver(highlight);
+    div.mouseOut(unhighlight);
+    // "remove" the word when pressed
+    div.mousePressed(eraseIt);
+  }
+}
+
 // The cut-up algorithm is performed in this function
 function process(data) {
 
@@ -50,9 +80,11 @@ function eraseIt() {
     // "removing it by changing the color to match background"
     this.style('color', '#FFF');
     this.style('background-color', '');
+    console.log(this);
   } else {
     // Actually hiding the div itself
     this.hide();
+    console.log(this);
   }
 }
 

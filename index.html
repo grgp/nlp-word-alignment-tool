@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Erasure Machine</title>
+    <title>Word Alignment Tool</title>
     <script src="libraries/p5.js" type="text/javascript"></script>
 
     <script src="libraries/p5.dom.js" type="text/javascript"></script>
@@ -21,9 +21,13 @@
         font-weight: bold;
       }
 
-      .text {
-        border-style: solid;
-        border-width: 1px;
+      .idr {
+        border: 2px solid #f58080;
+        padding: 20px;
+      }
+
+      .eng {
+        border: 2px solid #9090f9;
         padding: 20px;
       }
 
@@ -39,7 +43,7 @@
   </head>
   <body>
 
-    <h1>Erasure Machine</h1>
+    <h1>Word Alignment Tool</h1>
 
     <p>
       <a href="#" id ="sample">use text sample</a>
@@ -52,6 +56,10 @@
     <p>
       <textarea id = "textinput" rows="5" cols="60">Enter some text</textarea><br/>
       <button id = "submit">submit</button>
+    </p>
+
+    <p>
+      <textarea id="textresult" cols="60" rows="2"></textarea>
     </p>
 
     <p>
