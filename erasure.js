@@ -3,6 +3,9 @@
 // https://github.com/shiffman/A2Z-F16
 // http://shiffman.net/a2z
 
+var idrPicked = [];
+var engPicked = [];
+
 function processPairs(data) {
   for (let pair of data) {
     showBox(pair.idr, 'idr');
@@ -16,11 +19,24 @@ function showBox(words, lang) {
   par.class(lang);
 
   for (var i = 0; i < words.length; i++) {
-    var div = createDiv(words[i] + ' ');
+    if (lang == 'idr') {
+      var splitted = words[i].trim().split(/\((?![\([0-9]])/);
+      var word = splitted[0];
+      var idx = splitted[1].split(')')[0];
+    } else {
+      var splitted = words[i].trim().split(' ');
+      var word = splitted[0];
+      var idx = i;
+    }
+    var div = createDiv(word + ' ');
     // This keeps it looking like regular text
     div.style('display', 'inline');
     // This makes it look clickable
     div.style('cursor', 'pointer');
+    
+    // This tracks things
+    div.attribute('lang', lang);
+    div.attribute('idx', idx);
 
     // The div is placed inside the paragraph element
     div.parent(par);
@@ -29,44 +45,42 @@ function showBox(words, lang) {
     div.mouseOver(highlight);
     div.mouseOut(unhighlight);
     // "remove" the word when pressed
-    div.mousePressed(eraseIt);
-  }
-}
-
-// The cut-up algorithm is performed in this function
-function process(data) {
-
-  // I'm doing something special here with a regex
-  // To keep the delimiter, you have to use regex
-  // more about this next week
-  // var words = data.split(/([ .,:;!@#$%&*()\n])/);
-
-  var words = splitTokens(data, ' .,:;!@#$%&*()\n');
-
-  var par = createP('');
-  par.class('text');
-
-  // Here each word is made into a div
-  for (var i = 0; i < words.length; i++) {
-    var div = createDiv(words[i] + ' ');
-    // This keeps it looking like regular text
-    div.style('display', 'inline');
-    // This makes it look clickable
-    div.style('cursor', 'pointer');
-
-    // The div is placed inside the paragraph element
-    div.parent(par);
-
-    // Handling mouseover, mouseout, and pressed
-    div.mouseOver(highlight);
-    div.mouseOut(unhighlight);
-    // "remove" the word when pressed
-    div.mousePressed(eraseIt);
+    if (lang == 'idr') {
+      div.mousePressed(idrPick);
+    } else {
+      div.mousePressed(engPick);
+    }
   }
 
   paragraphs.push(par);
+}
 
+function clearSelection(div) {
+  div.style('background-color', '#fff');
+  div.style('color', '#000');
+  div.attribute('clicked', 'false');
+}
 
+function idrPick() {
+  if (!(idrPicked.length == 0 || keyIsDown(SHIFT))) {
+    for (let div of idrPicked) {
+      clearSelection(div);
+    }
+    idrPicked = [];
+  }
+  idrPicked.push(this);
+  this.style('background-color', '#f58080');
+  this.style('color', '#fff');
+  this.attribute('clicked', 'true');
+  console.log(idrPicked);
+}
+
+function engPick() {
+  engPicked.push(this.html());
+  this.style('background-color', '#9090f9');
+  this.style('color', '#fff');
+  this.attribute('clicked', 'true');
+  console.log(engPicked);
 }
 
 // The function refers to "this"
@@ -89,9 +103,13 @@ function eraseIt() {
 }
 
 function highlight() {
-  this.style('background-color', '#AAA')
+  if (this.attribute('clicked') != 'true') {
+    this.style('background-color', '#AAA')
+  }
 }
 
 function unhighlight() {
-  this.style('background-color', '');
+  if (this.attribute('clicked') != 'true') {
+    this.style('background-color', '');
+  }
 }

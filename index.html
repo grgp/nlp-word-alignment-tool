@@ -14,6 +14,12 @@
     <style>
       body {
         padding: 20px;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
 
       .file {
@@ -62,8 +68,13 @@
       <textarea id="textresult" cols="60" rows="2"></textarea>
     </p>
 
-    <p>
+    <!--<p>
       <input type ="checkbox" id = "keepspacing" checked = "true"> keep spacing?</input>
+    </p>-->
+
+    <p>
+      <a href="#" id ="reset-pick">reset pick</a>
+      <a href="#" id ="reset-sentence">reset sentence</a>
     </p>
 
     <p><button id = "clear">clear</button></p>
