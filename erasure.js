@@ -46,7 +46,7 @@ function showBox(words, lang, k) {
       var idx = i;
     }
     actualWords.push(word);
-    targetIndexes.push([]);
+    targetIndexes.push('');
 
     var div = createDiv(word + ' ');
     // This keeps it looking like regular text
@@ -112,24 +112,21 @@ function resultCalc() {
     nullIndexes.push(i);
   }
 
-  for (let wordIdx of taggedSents[atSentence].indexes) {
-    for (let idx of wordIdx) {
-      console.log("im an idx", idx);
-      if (removeFromNullIndexes[atSentence].indexOf(idx) == -1) {
-        console.log("yeaa");
-        removeFromNullIndexes[atSentence].push(idx);
-        console.log("removeFromNul", removeFromNullIndexes[atSentence]);        
+  for (let wordIndexes of taggedSents[atSentence].indexes) {
+    if (wordIndexes.length > 0) {
+      var wordIndexesInt = wordIndexes.split(' ').map(function(item) {
+        return parseInt(item, 10);
+      });
+
+      for (let wdx of wordIndexesInt) {
+        if (removeFromNullIndexes[atSentence].indexOf(wdx) < 0) {
+          removeFromNullIndexes[atSentence].push(wdx);
+        }
       }
     }
   }
 
-  for (let idx of removeFromNullIndexes[atSentence]) {
-    if (nullIndexes.indexOf(idx) > -1) {
-      nullIndexes.splice(nullIndexes.indexOf(idx), 1);
-    }
-  }
-
-  console.log("removeFromNull, ", removeFromNullIndexes[atSentence]);
+  console.log(",", removeFromNullIndexes[atSentence]);
 
   for (let div of idrPicked) {
     var cIdx = parseInt(div.attribute('idx'));
@@ -141,20 +138,17 @@ function resultCalc() {
   var nullIndexesAll = '';
 
   for (let fIdx of nullIndexes) {
-    nullIndexesAll += fIdx + ' ';
+    if (removeFromNullIndexes[atSentence].indexOf(fIdx) == -1) {
+      nullIndexesAll += fIdx + ' ';
+    }
   }
 
   for (let div of engPicked) {
     engEventIndexes.push(parseInt(div.attribute('idx'))); }
 
-  listOfIndexes = taggedSents[atSentence].indexes;
-
-  for (var k = 0; k < engEventIndexes.length; k++) {
-    listOfIndexes[engEventIndexes[k]] = (idrEventIndexes.trim());
+  for (var k = 0; k < taggedSents[atSentence].indexes.length; k++) {
+    taggedSents[atSentence].indexes[engEventIndexes[k]] = (idrEventIndexes.trim());
   }
-
-  console.log(idrEventIndexes);
-  console.log(engEventIndexes);
 
   res = select('.result-' + atSentence);
   
@@ -172,7 +166,6 @@ function resultCalc() {
 
 function keyPressed() {
   if (keyCode == CONTROL) {
-    console.log(atSentence);
     var res = select('.result-' + atSentence);
     resultCalc();
   }
@@ -210,25 +203,6 @@ function engPick() {
   this.style('color', '#fff');
   this.attribute('clicked', 'true');
   console.log(engPicked);
-}
-
-// The function refers to "this"
-// "this" is the div that the event is triggered on
-// p5 very conveniently assigns the element to this so that
-// the same callback can be used for many elements
-// more about this in future weeks!
-function eraseIt() {
-  if (spacingCheck.checked()) {
-  //if (spacingCheck.checked()) {
-    // "removing it by changing the color to match background"
-    this.style('color', '#FFF');
-    this.style('background-color', '');
-    console.log(this);
-  } else {
-    // Actually hiding the div itself
-    this.hide();
-    console.log(this);
-  }
 }
 
 function highlight() {
