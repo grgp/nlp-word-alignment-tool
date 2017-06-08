@@ -13,6 +13,7 @@
 
     <style>
       body {
+        font-family: Arial, sans-serif;
         padding: 20px;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -37,6 +38,11 @@
         padding: 20px;
       }
 
+      .result {
+        border: 2px solid #90f990;
+        padding: 20px;
+      }
+
       #drop_zone {
         padding: 10px;
         border-style: dotted;
@@ -50,13 +56,17 @@
   <body>
 
     <h1>Word Alignment Tool</h1>
+    <p>George Albert - 1406569781</p>
+    <p>Kode ini diadaptasi dari kode Daniel Shiffman (https://github.com/CodingTrain/), yang menggunakan p5.js untuk menyeleksi kata. License aslinya masih dapat dilihat di file-file .js.</p>
+    <p>Text yang dapat diproses tool ini berformat seperti data dari validation step. Untuk langsung menggunakannya untuk mengetes, silahkan tekan "Use Sample", lalu tekan tombol submit.</p>
+    <p>Cara menggunakan, klik kata di kotak merah dan di kotak biru untuk memasangkannya. Untuk memasankan kata lebih dari satu, tekan SHIFT sebelum klik. Setelah yakin akan alignment yang dipilih, tekan CTRL untuk konfirmasi. Sementara kode ini baru berkerja baik ke kalimat pertama saja, namun sebenarnya mudah jika diperbaiki.</p>
 
     <p>
-      <a href="#" id ="sample">use text sample</a>
+      <a href="#" id ="sample">Use Sample</a>
     </p>
 
     <p>
-      <div id="drop_zone">drag a file</div>
+      <div id="drop_zone">Drag a File</div>
     </p>
 
     <p>
@@ -71,11 +81,11 @@
     <!--<p>
       <input type ="checkbox" id = "keepspacing" checked = "true"> keep spacing?</input>
     </p>-->
-
+<!--
     <p>
       <a href="#" id ="reset-pick">reset pick</a>
       <a href="#" id ="reset-sentence">reset sentence</a>
-    </p>
+    </p>-->
 
     <p><button id = "clear">clear</button></p>
 

@@ -1,3 +1,5 @@
+// George Albert - 1406569781 - Tugas 2 NLP
+// Parts of code originally from:
 // A2Z F16
 // Daniel Shiffman
 // https://github.com/shiffman/A2Z-F16
@@ -5,19 +7,23 @@
 
 var idrPicked = [];
 var engPicked = [];
+var resultBoxes = [];
 var atSentence = 0;
-
+var idrSentenceLength = -1;
 var taggedSents = [];
+var removeFromNullIndexes = [];
 
-function TaggedSentence(words, indexes) {
+function TaggedSentence(words, indexes, idrSentenceLength) {
   this.words = words;
   this.indexes = indexes;
+  this.idrSentenceLength = idrSentenceLength;
 }
 
 function processPairs(data) {
   for (var i = 0; i < data.length; i++) {
     showBox(data[i].idr, 'idr', i);
     showBox(data[i].eng, 'eng', i);
+    removeFromNullIndexes.push([]);
   }
 }
 
@@ -51,6 +57,7 @@ function showBox(words, lang, k) {
     // This tracks things
     div.attribute('lang', lang);
     div.attribute('idx', idx);
+    div.attribute('atSentence', k);
 
     // The div is placed inside the paragraph element
     div.parent(par);
@@ -66,9 +73,14 @@ function showBox(words, lang, k) {
     }
   }
 
+  if (lang == 'idr') {
+    idrSentenceLength = actualWords.length;
+  }
+
   if (lang == 'eng') {
     var res = createP('');
-    res.class('result-' + k);
+    res.class('result result-' + k);
+    resultBoxes.push(res);
     
     var displayed = "";
 
@@ -77,7 +89,8 @@ function showBox(words, lang, k) {
     }
 
     res.html(displayed);
-    taggedSents.push(new TaggedSentence(actualWords, targetIndexes));
+    taggedSents.push(new TaggedSentence(actualWords, targetIndexes, idrSentenceLength));
+    idrSentenceLength = -1;
   }
 
   paragraphs.push(par);
@@ -93,8 +106,43 @@ function resultCalc() {
   var idrEventIndexes = '';
   var engEventIndexes = [];
 
+  var nullIndexes = [];
+
+  for (var i = 1; i < taggedSents[atSentence].idrSentenceLength; i++) {
+    nullIndexes.push(i);
+  }
+
+  for (let wordIdx of taggedSents[atSentence].indexes) {
+    for (let idx of wordIdx) {
+      console.log("im an idx", idx);
+      if (removeFromNullIndexes[atSentence].indexOf(idx) == -1) {
+        console.log("yeaa");
+        removeFromNullIndexes[atSentence].push(idx);
+        console.log("removeFromNul", removeFromNullIndexes[atSentence]);        
+      }
+    }
+  }
+
+  for (let idx of removeFromNullIndexes[atSentence]) {
+    if (nullIndexes.indexOf(idx) > -1) {
+      nullIndexes.splice(nullIndexes.indexOf(idx), 1);
+    }
+  }
+
+  console.log("removeFromNull, ", removeFromNullIndexes[atSentence]);
+
   for (let div of idrPicked) {
-    idrEventIndexes + ' ' + (div.attribute('idx')); }
+    var cIdx = parseInt(div.attribute('idx'));
+    var bIdx = nullIndexes.indexOf(cIdx);
+    idrEventIndexes += ' ' + (parseInt(div.attribute('idx')));
+    nullIndexes.splice(bIdx, 1);
+  }
+
+  var nullIndexesAll = '';
+
+  for (let fIdx of nullIndexes) {
+    nullIndexesAll += fIdx + ' ';
+  }
 
   for (let div of engPicked) {
     engEventIndexes.push(parseInt(div.attribute('idx'))); }
@@ -102,16 +150,21 @@ function resultCalc() {
   listOfIndexes = taggedSents[atSentence].indexes;
 
   for (var k = 0; k < engEventIndexes.length; k++) {
-    listOfIndexes[k] = (idrEventIndexes);
+    listOfIndexes[engEventIndexes[k]] = (idrEventIndexes.trim());
   }
+
+  console.log(idrEventIndexes);
+  console.log(engEventIndexes);
 
   res = select('.result-' + atSentence);
   
   var displayed = "";
   var actualWords = taggedSents[atSentence].words;
 
-  for (var k = 0; k < actualWords.length; k++) {
-    displayed += actualWords[k] + "({ " + taggedSents[atSentence].indexes[k] + "}) ";
+  displayed += 'NULL({ ' + nullIndexesAll + '}) ';
+
+  for (var k = 1; k < actualWords.length; k++) {
+    displayed += actualWords[k] + "({ " + taggedSents[atSentence].indexes[k] + " }) ";
   }
 
   res.html(displayed);
@@ -126,7 +179,10 @@ function keyPressed() {
 }
 
 function idrPick() {
-  if (!(idrPicked.length == 0 || keyIsDown(SHIFT))) {
+  if (atSentence != this.attribute('atSentence')) {
+    atSentence = this.attribute('atSentence');
+  }
+  if (atSentence != this.attribute('atSentence') || !(idrPicked.length == 0 || keyIsDown(SHIFT))) {
     for (let div of idrPicked) {
       clearSelection(div);
     }
@@ -136,10 +192,14 @@ function idrPick() {
   this.style('background-color', '#f58080');
   this.style('color', '#fff');
   this.attribute('clicked', 'true');
+  console.log(idrPicked);
 }
 
 function engPick() {
-  if (!(engPicked.length == 0 || keyIsDown(SHIFT))) {
+  if (atSentence != this.attribute('atSentence')) {
+    atSentence = this.attribute('atSentence');
+  }
+  if (atSentence != this.attribute('atSentence') || !(engPicked.length == 0 || keyIsDown(SHIFT))) {
     for (let div of engPicked) {
       clearSelection(div);
     }

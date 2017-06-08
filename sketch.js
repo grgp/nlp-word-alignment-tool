@@ -1,9 +1,9 @@
+// George Albert - 1406569781 - Tugas 2 NLP
+// Parts of code originally from:
 // A2Z F16
 // Daniel Shiffman
 // https://github.com/shiffman/A2Z-F16
 // http://shiffman.net/a2z
-
-
 
 // Many DOM elements
 var dropZone, input, button, sample, clearButton;
